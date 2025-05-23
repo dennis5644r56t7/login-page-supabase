@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "generate-products": "node scripts/generate-products.js",
     "download-images": "node scripts/download-images.js",
-    "populate-db": "node scripts/populate-products.js"
+    "populate-db": "node scripts/populate-products.js",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@faker-js/faker": "^8.0.0",
