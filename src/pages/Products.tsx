@@ -2,21 +2,19 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useCart } from '../context/CartContext';
-
-// Add placeholder image as base64 or data URL
-const PLACEHOLDER_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48cGF0aCBkPSJNODAgOTBIMTIwVjExMEg4MFY5MFoiIGZpbGw9IiM5Q0EzQUYiLz48L3N2Zz4=';
+import { PLACEHOLDER_IMAGE, getSafeImageUrl } from '../lib/imageUtils';
+import { formatCurrency } from '../lib/currencyUtils';
 
 interface Product {
   id: number;
   name: string;
-  description: string;
   price: number;
   discount_price: number | null;
   image_url: string;
   category: {
-    id: number;
     name: string;
   };
+  rating?: number;
 }
 
 interface Category {
@@ -41,19 +39,18 @@ const Products = () => {
 
   const fetchProducts = async () => {
     try {
+      setLoading(true);
+      setError(null);
+
       let query = supabase
         .from('products')
         .select(`
           id,
           name,
-          description,
           price,
           discount_price,
           image_url,
-          category:categories (
-            id,
-            name
-          )
+          category:categories (name)
         `);
 
       if (categoryId) {
@@ -73,7 +70,9 @@ const Products = () => {
       setProducts(transformedData);
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Failed to load products. Please try again later.');
+      setError('Failed to load products. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,6 +91,10 @@ const Products = () => {
 
   const handleImageError = (productId: number) => {
     setImageErrors(prev => ({ ...prev, [productId]: true }));
+  };
+
+  const calculateDiscount = (originalPrice: number, discountPrice: number) => {
+    return Math.round(((originalPrice - discountPrice) / originalPrice) * 100);
   };
 
   const handleAddToCart = async (productId: number) => {
@@ -178,11 +181,13 @@ const Products = () => {
             <div key={product.id} className="group relative">
               <div className="w-full aspect-w-1 aspect-h-1 rounded-lg overflow-hidden bg-gray-200">
                 <img
-                  src={imageErrors[product.id] ? PLACEHOLDER_IMAGE : product.image_url}
+                  src={imageErrors[product.id] ? PLACEHOLDER_IMAGE : getSafeImageUrl(product.image_url)}
                   alt={product.name}
                   className="w-full h-full object-center object-cover group-hover:opacity-75"
                   onError={() => handleImageError(product.id)}
                   loading="lazy"
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
                 />
               </div>
               <div className="mt-4 flex justify-between">
@@ -200,17 +205,14 @@ const Products = () => {
                 <div className="text-right">
                   {product.discount_price ? (
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        ${product.discount_price}
-                      </p>
-                      <p className="text-sm text-gray-500 line-through">
-                        ${product.price}
-                      </p>
+                      <span className="text-indigo-600 font-bold">{formatCurrency(product.discount_price)}</span>
+                      <span className="ml-1 text-xs text-gray-500 line-through">{formatCurrency(product.price)}</span>
+                      <span className="ml-2 px-1.5 py-0.5 bg-red-100 text-red-800 text-xs font-semibold rounded">
+                        {calculateDiscount(product.price, product.discount_price)}% OFF
+                      </span>
                     </div>
                   ) : (
-                    <p className="text-sm font-medium text-gray-900">
-                      ${product.price}
-                    </p>
+                    <span className="text-indigo-600 font-bold">{formatCurrency(product.price)}</span>
                   )}
                 </div>
               </div>
