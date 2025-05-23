@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .image-container {
+      margin: 20px 0;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 10px;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Unsplash Image Test</h1>
+  
+  <div class="image-container">
+    <h2>Direct Unsplash Image</h2>
+    <p>Testing direct loading of an Unsplash image with parameters:</p>
+    <img 
+      src="https://images.unsplash.com/photo-1669884210096-107e67f7ae2f?ixid=M3w3NTQ4ODJ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NDgwMDU2Nzd8&ixlib=rb-4.1.0&w=400&h=400&fit=crop&q=80"
+      alt="Test Unsplash Image"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+      onload="document.getElementById('status1').innerHTML = 'Image loaded successfully!'; document.getElementById('status1').className = 'success';"
+      onerror="document.getElementById('status1').innerHTML = 'Failed to load image!'; document.getElementById('status1').className = 'error';"
+    >
+    <p id="status1">Loading image...</p>
+  </div>
+
+  <div class="image-container">
+    <h2>Fallback Image</h2>
+    <p>Testing fallback placeholder image:</p>
+    <img 
+      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFNUU3RUIiLz48cGF0aCBkPSJNODAgOTBIMTIwVjExMEg4MFY5MFoiIGZpbGw9IiM5Q0EzQUYiLz48L3N2Zz4="
+      alt="Placeholder Image"
+      onload="document.getElementById('status2').innerHTML = 'Placeholder loaded successfully!'; document.getElementById('status2').className = 'success';"
+      onerror="document.getElementById('status2').innerHTML = 'Failed to load placeholder!'; document.getElementById('status2').className = 'error';"
+    >
+    <p id="status2">Loading placeholder...</p>
+  </div>
+
+  <script>
+    // Log any CORS or other errors
+    window.addEventListener('error', function(e) {
+      console.error('Error event:', e);
+      if (e.target.tagName === 'IMG') {
+        console.error('Image error:', e.target.src);
+      }
+    }, true);
+  </script>
+</body>
+</html> 
