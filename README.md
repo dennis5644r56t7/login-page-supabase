@@ -121,3 +121,17 @@ This project is licensed under the MIT License.
 
 - Images from Unsplash
 - Icons from React Icons
+
+## Currency
+
+All prices in the application are displayed in KSH (Kenyan Shillings). The conversion rate used is:
+1 USD = 150 KSH
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+# Auth-Pages-and-Simple-DB-practice-using-supabase
